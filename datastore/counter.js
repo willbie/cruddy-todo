@@ -43,16 +43,16 @@ exports.getNextUniqueId = (callback) => {
     //console.log(data);
     //console.log(counter);
     if (err) {
-      throw('Sorry u failed');
+      throw ('Sorry u failed');
     } else {
       counter++;
       writeCounter(counter, (err, zeroPaddedCounter) => {
         if (err) {
-          throw('Sorry u failed');
+          throw ('Sorry u failed');
         } else {
           callback(null, zeroPaddedCounter);
         }
-      })
+      });
     }
   });
   //count = count + 1;
