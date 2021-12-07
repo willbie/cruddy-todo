@@ -29,8 +29,21 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  console.log(items);
-
+  fs.readdir(exports.dataDir, (err, fileData) => {
+    if (err) {
+      throw ('Sorry Will you sucks');
+    } else {
+      var data = _.map(fileData, (file) => {
+        var id = file.slice(0, 5);
+        var text = file.slice(0, 5);
+        var item = {};
+        item.id = id;
+        item.text = text;
+        return item;
+      });
+      callback(null, data);
+    }
+  });
   //var data = _.map(items, (text, id) => {
   //  return { id, text };
   //});
