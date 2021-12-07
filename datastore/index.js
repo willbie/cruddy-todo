@@ -78,7 +78,7 @@ exports.update = (id, text, callback) => {
     } else {
       fs.writeFile(path, text, (err) => {
         if (err) {
-          throw "WILL YOU SUCK";
+          throw 'WILL YOU SUCK';
         } else {
           callback(null, text);
         }
@@ -95,14 +95,28 @@ exports.update = (id, text, callback) => {
 };
 
 exports.delete = (id, callback) => {
-  var item = items[id];
+  var path = exports.dataDir + '/' + id.toString() + '.txt';
+  fs.readFile(path, 'utf8', (err, fileData) => {
+    if (err) {
+      callback(err);
+    } else {
+      fs.unlink(path, (err) => {
+        if (err) {
+          throw err;
+        } else {
+          callback(err);
+        }
+      })
+    }
+  });
+  /*var item = items[id];
   delete items[id];
   if (!item) {
     // report an error if item not found
     callback(new Error(`No item with id: ${id}`));
   } else {
     callback();
-  }
+  }*/
 };
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
