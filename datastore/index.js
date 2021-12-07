@@ -31,7 +31,7 @@ exports.create = (text, callback) => {
 exports.readAll = (callback) => {
   fs.readdir(exports.dataDir, (err, fileData) => {
     if (err) {
-      throw ('Sorry Will you sucks');
+      throw ('Sorry Will you suck');
     } else {
       var data = _.map(fileData, (file) => {
         var id = file.slice(0, 5);
@@ -54,7 +54,7 @@ exports.readOne = (id, callback) => {
   var path = exports.dataDir + '/' + id.toString() + '.txt';
   fs.readFile(path, 'utf8', (err, fileData) =>{
     if (err) {
-      callback(err, fileData);
+      callback(err);
     } else {
       items.id = id;
       items.text = fileData;
@@ -71,13 +71,27 @@ exports.readOne = (id, callback) => {
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
+  var path = exports.dataDir + '/' + id.toString() + '.txt';
+  fs.readFile(path, 'utf8', (err, fileData) => {
+    if (err) {
+      callback(err);
+    } else {
+      fs.writeFile(path, text, (err) => {
+        if (err) {
+          throw "WILL YOU SUCK";
+        } else {
+          callback(null, text);
+        }
+      });
+    }
+  });
+  /*var item = items[id];
   if (!item) {
     callback(new Error(`No item with id: ${id}`));
   } else {
     items[id] = text;
     callback(null, { id, text });
-  }
+  }*/
 };
 
 exports.delete = (id, callback) => {
