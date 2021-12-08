@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('underscore');
 const counter = require('./counter');
+const Promises = require('bluebird');
 
 var items = {};
 
@@ -29,26 +30,39 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  fs.readdir(exports.dataDir, (err, fileData) => {
+  fs.readdir(exports.dataDir, (err, files) => {
     if (err) {
-      throw ('Sorry Will you suck');
+      return callback(err)
     } else {
-      var data = _.map(fileData, (file) => {
-        var id = file.slice(0, 5);
-        var text = file.slice(0, 5);
-        var item = {};
-        item.id = id;
-        item.text = text;
-        return item;
+      var data = _.map(files, (file) => {
+        var id = path.basename(file, '.txt')
+        var filepath = path.join(exports.dataDir, file);
+        return readFileSync(filepath).then((fileData) => {
+          return {
+            id: id,
+            text: fileData.toString()
+          };
+        });
       });
-      callback(null, data);
+      Promises.all(data).then((items => {
+        callback(null, items);
+      }))
     }
-  });
-  //var data = _.map(items, (text, id) => {
-  //  return { id, text };
-  //});
-  //callback(null, data);
+  })
 };
+
+var readFileSync = (filepath) => {
+  return new Promises ((resolve, reject) => {
+    fs.readFile(filepath, (err, fileData) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(fileData);
+      }
+    })
+  });
+}
+
 
 exports.readOne = (id, callback) => {
   var path = exports.dataDir + '/' + id.toString() + '.txt';
@@ -106,7 +120,7 @@ exports.delete = (id, callback) => {
         } else {
           callback(err);
         }
-      })
+      });
     }
   });
   /*var item = items[id];
